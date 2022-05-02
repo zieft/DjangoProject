@@ -128,4 +128,55 @@ def user_edit(request, nid):
         return render(request, 'user_edit.html', {'form': form})
 
 
-def user_
+def user_delete(request, nid):
+    models.UserInfo.objects.filter(id=nid).delete()
+    return redirect('/user/list/')
+
+
+###  以下是靓号管理
+def num_list(request):
+    # -level: 按级别倒序排列
+    queryset = models.PrettyNum.objects.all().order_by('-level')
+
+    return render(request, 'num_list.html', {'queryset': queryset})
+
+from django.core.validators import RegexValidator
+from django.core.validators import ValidationError
+
+class PrettyNumModelForm(forms.ModelForm):
+    # 字段验证，方法1：
+    mobile = forms.CharField(
+        label='手机号',
+        # validators=[RegexValidator(r'^159[0-9]+$', '号码必须以159开头')]
+        validators=[RegexValidator(r'^1\d{10}$', '号码必须以1开头，总长度为11。')]
+    )
+    class Meta:
+        model = models.PrettyNum
+        # fields = ['mobile', 'price', 'level', 'status']
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # 循环找到所有插件，添加class='form-control'样式
+        for name, field in self.fields.items():
+            field.widget.attrs = {'class': 'form-control', 'placeholder': field.label}
+
+    # # 字段验证，方法2：
+    # def clean_mobile(self):
+    #     txt_mobile = self.cleaned_data['mobile'] # 获取用户输入的数据
+    #     # 验证不通过，则抛出异常
+    #     if len(txt_mobile) != 11:
+    #         raise ValidationError('格式错误')
+    #     # 验证通过，返回用户输入的值
+    #     return txt_mobile
+
+def num_add(request):
+    if request.method == 'GET':
+        form = PrettyNumModelForm()
+        return render(request, 'num_add.html', {'form': form})
+    form = PrettyNumModelForm(data=request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect('/num/list/')
+    else:
+        return render(request, 'num_add.html', {'form': form})

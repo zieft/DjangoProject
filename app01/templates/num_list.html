@@ -3,16 +3,16 @@
     <div>
         <div class="container">
             <div style="margin-bottom: 10px">
-                <a class="btn btn-success" href="/user/add/">  {# _blank在新标签打开 #}
+                <a class="btn btn-success" href="/num/add/">  {# _blank在新标签打开 #}
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    新建用户</a>
+                    新建靓号</a>
             </div>
 
             <div class="panel panel-default">
                 <!-- Default panel contents -->
                 <div class="panel-heading">
                     <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                    用户列表
+                    靓号列表
                 </div>
                 <div class="panel-body">
                     <p>一些文字</p>
@@ -23,13 +23,10 @@
                     <thead>
                     <tr>
                         <th>id</th>
-                        <th>姓名</th>
-                        <th>密码</th>
-                        <th>年龄</th>
-                        <th>账户余额</th>
-                        <th>创建时间</th>
-                        <th>性别</th>
-                        <th>部门</th>
+                        <th>手机号</th>
+                        <th>价格</th>
+                        <th>级别</th>
+                        <th>状态</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -37,16 +34,13 @@
                     {% for obj in queryset %}
                         <tr>
                             <th>{{ obj.id }}</th>
-                            <td>{{ obj.name }}</td>
-                            <td>{{ obj.password }}</td>
-                            <td>{{ obj.age }}</td>
-                            <td>{{ obj.account }}</td>
-                            <td>{{ obj.create_date|date:"Y-m-d" }}</td>  <!--注意跟python语法的不同之处-->
-                            <td>{{ obj.get_gender_display }}</td>
-                            <td>{{ obj.depart.title }}</td>
+                            <td>{{ obj.mobile }}</td>
+                            <td>{{ obj.price }}</td>
+                            <td>{{ obj.get_level_display }}</td>
+                            <td>{{ obj.get_status_display }}</td>
                             <td>
-                                <a href="/user/{{ obj.id }}/edit/" class="btn btn-primary btn-xs">编辑</a>
-                                <a href="/user/{{ obj.id }}/delete" class="btn btn-danger btn-xs">删除</a>
+                                <a href="#" class="btn btn-primary btn-xs">编辑</a>
+                                <a href="#" class="btn btn-danger btn-xs">删除</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -55,4 +49,6 @@
             </div>
         </div>
     </div>
+
 {% endblock %}
+

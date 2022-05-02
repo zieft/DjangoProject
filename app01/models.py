@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Department(models.Model):
     """
@@ -9,6 +10,7 @@ class Department(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class UserInfo(models.Model):
     name = models.CharField(verbose_name='姓名', max_length=16)
@@ -25,3 +27,22 @@ class UserInfo(models.Model):
     gender = models.SmallIntegerField(verbose_name='性别', choices=gender_choices)
     # department_id = models.BigIntegerField(verbose_name="部门ID")
     depart = models.ForeignKey(verbose_name='部门', to="Department", to_field="id", on_delete=models.CASCADE)
+
+
+class PrettyNum(models.Model):
+    mobile = models.CharField(verbose_name='手机号', max_length=32)
+    price = models.IntegerField(verbose_name='价格', default=0, null=True, blank=True)
+
+    status_choice = (
+        (1, '未占用'),
+        (2, '已占用'),
+    )
+    status = models.SmallIntegerField(verbose_name='状态', choices=status_choice, default=1)
+
+    level_choice = (
+        (1, '特级'),
+        (2, '高级'),
+        (3, '中级'),
+        (4, '一般'),
+    )
+    level = models.SmallIntegerField(verbose_name='靓号等级', choices=level_choice, default=4)
