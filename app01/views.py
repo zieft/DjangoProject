@@ -83,6 +83,7 @@ class UserModelForm(forms.ModelForm):
         #     'password': forms.PasswordInput(attrs={'class': 'form-control'}),
         #     'age': forms.TextInput(attrs={'class': 'form-control'}),
         # }
+
     def __init__(self, *args, **kwargs):
         """
         重新定义__init__方法
@@ -93,6 +94,7 @@ class UserModelForm(forms.ModelForm):
         # 循环找到所有插件，添加class='form-control'样式
         for name, field in self.fields.items():
             field.widget.attrs = {'class': 'form-control', 'placeholder': field.label}
+
 
 def user_add(request):
     if request.method == 'GET':
@@ -105,7 +107,25 @@ def user_add(request):
         print(form.cleaned_data)
         form.save()
         return redirect('/user/list/')
-    else: # 校验失败，在页面上显示错误信息
+    else:  # 校验失败，在页面上显示错误信息
         print(form.errors)
         return render(request, 'user_add.html', {'form': form})
 
+
+def user_edit(request, nid):
+    if request.method == 'GET':
+        # 根据ID从数据库获取要编辑的那一行数据
+        row_object = models.UserInfo.objects.filter(id=nid).first()
+        form = UserModelForm(instance=row_object)
+        return render(request, "user_edit.html", {'form': form})
+
+    row_object = models.UserInfo.objects.filter(id=nid).first()
+    form = UserModelForm(data=request.POST, instance=row_object)
+    if form.is_valid():
+        form.save()
+        return redirect('/user/list/')
+    else:
+        return render(request, 'user_edit.html', {'form': form})
+
+
+def user_
