@@ -133,12 +133,30 @@ def user_delete(request, nid):
     return redirect('/user/list/')
 
 
+from django.utils.safestring import mark_safe  # 用于标记从后端传到前端的字符串为安全的，从而可以转换成html
+
+
 ###  以下是靓号管理
 def num_list(request):
+    total_count = models.PrettyNum.objects.all().count()
+    page = int(request.GET.get('page', 1))
+    page_size = 10
+    total_page_numbers, rest = divmod(total_count, page_size)
+    if rest:
+        total_page_numbers += 1
+    start = (page - 1) * page_size
+    end = page * page_size
     # -level: 按级别倒序排列
-    queryset = models.PrettyNum.objects.all().order_by('-level')
+    queryset = models.PrettyNum.objects.all().order_by('-level')[start:end]
 
-    return render(request, 'num_list.html', {'queryset': queryset})
+    # 页码
+    page_str_list = []
+    for i in range(1, total_page_numbers + 1):
+        ele = '<li><a href="?page={}">{}</a></li>'.format(i, i)
+        page_str_list.append(ele)
+
+    page_str = mark_safe("".join(page_str_list))  # 不加mark_safe的话，前端无法将此字符串转换成html代码
+    return render(request, 'num_list.html', {'queryset': queryset, 'page_str': page_str})
 
 
 from django.core.validators import RegexValidator
@@ -238,4 +256,11 @@ def num_edit(request, nid):
 
 def num_delete(request, nid):
     models.PrettyNum.objects.filter(id=nid).delete()
+    return redirect('/num/list/')
+
+
+def num_createalot(request):
+    for i in range(300):
+        models.PrettyNum.objects.create(mobile=str(15928431617 + i), price=300)
+
     return redirect('/num/list/')

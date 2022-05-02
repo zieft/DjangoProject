@@ -1,4 +1,10 @@
 {% extends 'layout.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap-' %}">
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="panel panel-default">
