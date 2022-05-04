@@ -169,3 +169,71 @@ def num_createalot(request):
         models.PrettyNum.objects.create(mobile=str(15928431617 + i), price=300)
 
     return redirect('/num/list/')
+
+
+from app01.utils.pagination import Pagination
+def member_list(request):
+    """
+    非组内用户列表
+    :param request:
+    :return:
+    """
+    queryset = models.Member.objects.all()
+
+    page_object = Pagination(request, queryset)
+    context = {
+        'queryset':queryset,
+        'page_string': page_object.html(),
+    }
+    return render(request, 'member_list.html', context)
+
+
+
+from app01.utils.encrypt import md5
+class MemberModelForm(BootStrapModelForm):
+    confirm_password = forms.CharField(
+        label='确认密码',
+        widget=forms.PasswordInput, # model里没定义的表单，widget必须写在这里
+                                    # 输错密码后，默认清空输入框，如果不想清空可以 forms.PasswordInput(render_value=True)
+
+    )
+
+    class Meta:
+        model = models.Member
+        fields = ['username', 'password', 'confirm_password']
+        widgets = {
+            'password': forms.PasswordInput,
+            'confirm_password': forms.PasswordInput, # 在此类里新定义的表单，不行。这里只影响model里定义的表单
+
+        }
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        return md5(password)
+
+    def clean_confirm_password(self):
+        pwd = self.cleaned_data.get('password')
+        confirm = md5(self.cleaned_data.get('confirm_password'))
+
+        if confirm != pwd:
+            raise ValidationError('密码不一致，请重新输入')
+        return confirm # 这里return什么值，下面form.save()数据库里就保存什么值
+
+
+def member_add(request):
+    title = "添加非组内用户"
+
+    if request.method == 'GET':
+        form = MemberModelForm
+        context = {
+            'title': title,
+            'form': form,
+        }
+        return render(request, 'template_add.html', context)
+
+    form = MemberModelForm(data=request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect('/member/list/')
+    else:
+        return render(request, 'template_add.html', {'form': form, 'title': '添加非组内用户'})

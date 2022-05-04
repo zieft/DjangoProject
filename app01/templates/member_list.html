@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div>
+        <div class="container">
+            <div style="margin-bottom: 10px">
+                <a class="btn btn-success" href="/member/add/">  {# _blank在新标签打开 #}
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    添加非组内用户</a>
+            </div>
+
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                    非组内用户列表
+                </div>
+                <div class="panel-body">
+                    <p>一些文字</p>
+                </div>
+
+                <!-- Table -->
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>借还状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for obj in queryset %}
+                        <tr>
+                            <th>{{ obj.id }}</th>
+                            <td>{{ obj.username }}</td>
+                            <td>{{ obj.password }}</td>
+                            <td>暂无</td>
+                            <td>
+                                <a href="#" class="btn btn-primary btn-xs">编辑</a>
+                                <a href="#" class="btn btn-danger btn-xs">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        <ul class="pagination">{{ page_string }}</ul>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
